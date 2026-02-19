@@ -58,6 +58,7 @@ if not st.session_state.login:
         if st.button("Login"):
             if authenticate(user,pwd):
                 st.session_state.login=True
+                st.session_state.doctor = user
                 st.rerun()
             else:
                 st.error("Invalid credentials")
@@ -135,7 +136,8 @@ else:
             if patient_name.strip()=="":
                 st.warning("Enter patient name")
             else:
-                save_patient(patient_name, age, glu, bp, bmi, user)
+                doctor = st.session_state.get("doctor","unknown")
+                save_patient(patient_name, age, glu, bp, bmi, doctor)
                 st.success("Patient saved ✅")
 
                 # refresh table

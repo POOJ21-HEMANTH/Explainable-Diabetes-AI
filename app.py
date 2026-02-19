@@ -118,6 +118,26 @@ else:
 
     # ================= SHOW RESULTS =================
     if "prediction_data" in st.session_state:
+        # ================= RISK CARD =================
+        risk_label = "Low Risk"
+        risk_color = "#bbf7d0"
+
+        if prob >= 0.65:
+            risk_label = "High Risk"
+            risk_color = "#fecaca"
+        elif prob >= 0.35:
+            risk_label = "Moderate Risk"
+            risk_color = "#fde68a"
+
+        st.markdown(f"""
+        <div style="background:{risk_color};
+        padding:18px;border-radius:14px;margin-top:10px;margin-bottom:10px;
+        box-shadow:0px 6px 14px rgba(0,0,0,0.08)">
+        <b>Risk Level:</b> {risk_label}<br>
+        <b>Probability:</b> {prob*100:.1f}%
+        </div>
+        """, unsafe_allow_html=True)
+
 
         pred,prob,exp,shap_vals = st.session_state.prediction_data
 
@@ -129,6 +149,40 @@ else:
             st.warning(f"Moderate Risk ({prob*100:.1f}%)")
         else:
             st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
+        # ================= AUTO EXPLANATION =================
+        top_factors = [f for f,v in exp if v>0][:3]
+
+        explanation_para = (
+            f"The AI model estimates a {risk_label.lower()} diabetes risk primarily due to "
+            f"{', '.join(top_factors)} influencing metabolic health. "
+            f"These factors contribute to impaired glucose regulation and insulin response patterns."
+        )
+
+        st.subheader("AI Clinical Reasoning")
+        st.info(explanation_para)
+        # ================= CARE PLAN =================
+        st.subheader("Suggested Care Plan")
+
+        if prob < 0.35:
+            st.success("Maintain healthy lifestyle")
+            st.write("- Balanced diet")
+            st.write("- Regular exercise")
+            st.write("- Annual screening")
+
+        elif prob < 0.65:
+            st.warning("Preventive intervention recommended")
+            st.write("- Reduce sugar intake")
+            st.write("- Weight management")
+            st.write("- Monthly glucose monitoring")
+
+        else:
+            st.error("Clinical follow-up recommended")
+            st.write("- Consult physician")
+            st.write("- HbA1c testing")
+            st.write("- Structured diet plan")
+            st.write("- Regular glucose monitoring")
+
+            
 
         # ================= SAVE BUTTON (NOW WORKS) =================
         if st.button("💾 Save Patient Record"):

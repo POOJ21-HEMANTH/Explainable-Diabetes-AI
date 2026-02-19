@@ -46,7 +46,7 @@ if not st.session_state.login:
     st.markdown("""
 <style>
 .stApp {
-    background-image: url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3");
+    background-image: url("https://img.freepik.com/free-vector/watercolor-medical-background_52683-162142.jpg?semt=ais_user_personalization&w=740&q=80");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

@@ -118,6 +118,7 @@ else:
 
     # ================= SHOW RESULTS =================
     if "prediction_data" in st.session_state:
+        pred,prob,exp,shap_vals = st.session_state.prediction_data
         # ================= RISK CARD =================
         risk_label = "Low Risk"
         risk_color = "#bbf7d0"
@@ -137,9 +138,6 @@ else:
         <b>Probability:</b> {prob*100:.1f}%
         </div>
         """, unsafe_allow_html=True)
-
-
-        pred,prob,exp,shap_vals = st.session_state.prediction_data
 
         st.header("Clinical Risk Assessment")
 

@@ -4,6 +4,40 @@ from auth import authenticate
 from utils import predict_and_explain
 import shap
 
+st.markdown("""
+<style>
+
+.main {
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+h1, h2, h3 {
+    color: #ffffff;
+    text-align:center;
+}
+
+.stButton>button {
+    background: linear-gradient(45deg,#00c6ff,#0072ff);
+    color:white;
+    border-radius:12px;
+    height:3em;
+    width:100%;
+    font-size:18px;
+    border:none;
+    box-shadow:0px 4px 15px rgba(0,0,0,0.2);
+}
+
+.stNumberInput input {
+    border-radius:10px;
+}
+
+.block-container {
+    padding-top:2rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 st.set_page_config(page_title="Explainable Diabetes AI")
 
 # ================= SESSION STATE =================
@@ -40,7 +74,8 @@ if not st.session_state.login:
 
 else:
 
-    st.title("Explainable Diabetes Decision Support")
+    st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
+    st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
     st.subheader("Patient Data Entry")
     st.markdown("### Demo Patients")
@@ -92,11 +127,18 @@ else:
 
         st.header("Prediction")
 
-        if pred==1:
-            st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
-        else:
-            st.success(f"Low Diabetes Risk ({prob*100:.1f}%)")
+        st.header("Clinical Risk Assessment")
 
+        if history=="Yes":
+         st.error("Known Diabetes Case → Monitoring Mode")
+
+        else:
+            if prob < 0.35:
+                st.success(f"Healthy / Low Risk ({prob*100:.1f}%)")
+            elif prob < 0.65:
+                st.warning(f"Moderate Risk ({prob*100:.1f}%)")
+            else:
+                st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
         # ================= LIME TEXT =================
 
         st.subheader("Why this prediction?")

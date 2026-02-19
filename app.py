@@ -95,33 +95,54 @@ if "patient" not in st.session_state:
 # ================= LOGIN PAGE =================
 if not st.session_state.login:
 
-    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
-    st.markdown('<div class="login-card">', unsafe_allow_html=True)
-
-    # LEFT PANEL
     st.markdown("""
-    <div class="left-panel">
-        <h2>AI Clinical Support</h2>
-        <p>Explainable diabetes screening for transparent medical decisions.</p>
-    </div>
+    <style>
+    .stApp {
+        background: linear-gradient(to bottom right, #e0f2fe, #f3e8ff);
+    }
+    .login-box {
+        background:white;
+        padding:40px;
+        border-radius:20px;
+        box-shadow:0 20px 40px rgba(0,0,0,0.1);
+    }
+    .center-box {
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:80vh;
+    }
+    </style>
     """, unsafe_allow_html=True)
 
+    col1, col2 = st.columns([5,6])
+
+    # LEFT PANEL
+    with col1:
+        st.markdown("<div style='padding:3rem;text-align:center'>", unsafe_allow_html=True)
+        st.markdown("## 🩺 Explainable AI")
+        st.markdown("Transparent diabetes screening for clinical support")
+        st.markdown("</div>", unsafe_allow_html=True)
+
     # RIGHT PANEL
-    st.markdown('<div class="right-panel">', unsafe_allow_html=True)
-    st.markdown('<div class="title">Doctor Login</div>', unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
-    user = st.text_input("Username")
-    pwd = st.text_input("Password", type="password")
+        st.markdown("### Doctor Login")
 
-    if st.button("Login"):
-        if authenticate(user,pwd):
-            st.session_state.login=True
-            st.success("Login successful")
-            st.rerun()
-        else:
-            st.error("Invalid credentials")
+        user = st.text_input("Username")
+        pwd = st.text_input("Password", type="password")
 
-    st.markdown("</div></div></div>", unsafe_allow_html=True)
+        if st.button("Login"):
+            if authenticate(user,pwd):
+                st.session_state.login=True
+                st.success("Login successful")
+                st.rerun()
+            else:
+                st.error("Invalid credentials")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 # ================= MAIN APP =================
 else:

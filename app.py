@@ -2,20 +2,26 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from auth import authenticate
 from utils import predict_and_explain
-import shap
 
+# ================= PAGE CONFIG =================
+st.set_page_config(page_title="Explainable Diabetes AI", layout="centered")
+
+# ================= GLOBAL CSS =================
 st.markdown("""
 <style>
 
+/* Background */
 .main {
     background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
-h1, h2, h3 {
-    color: #ffffff;
+/* Titles */
+h1,h2,h3 {
+    color:white;
     text-align:center;
 }
 
+/* Buttons */
 .stButton>button {
     background: linear-gradient(45deg,#00c6ff,#0072ff);
     color:white;
@@ -27,25 +33,58 @@ h1, h2, h3 {
     box-shadow:0px 4px 15px rgba(0,0,0,0.2);
 }
 
+/* Inputs */
 .stNumberInput input {
     border-radius:10px;
 }
 
-.block-container {
-    padding-top:2rem;
+/* LOGIN CARD */
+.login-wrapper{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:80vh;
+}
+
+.login-card{
+    display:flex;
+    width:900px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0px 10px 30px rgba(0,0,0,0.15);
+    overflow:hidden;
+}
+
+.left-panel{
+    flex:1;
+    background:linear-gradient(135deg,#a8c0ff,#3f2b96);
+    color:white;
+    padding:40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.right-panel{
+    flex:1;
+    padding:40px;
+}
+
+.title{
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:20px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(page_title="Explainable Diabetes AI")
-
 # ================= SESSION STATE =================
-
 if "login" not in st.session_state:
     st.session_state.login = False
 
-# patient data persistence
 default_patient = {
     "preg":0,"glu":0,"bp":0,"skin":0,"ins":0,"bmi":0.0,"dpf":0.0,"age":25
 }
@@ -53,51 +92,56 @@ default_patient = {
 if "patient" not in st.session_state:
     st.session_state.patient = default_patient.copy()
 
-# ================= LOGIN =================
-
+# ================= LOGIN PAGE =================
 if not st.session_state.login:
 
-    st.title("Doctor Login")
+    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
+
+    # LEFT PANEL
+    st.markdown("""
+    <div class="left-panel">
+        <h2>AI Clinical Support</h2>
+        <p>Explainable diabetes screening for transparent medical decisions.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # RIGHT PANEL
+    st.markdown('<div class="right-panel">', unsafe_allow_html=True)
+    st.markdown('<div class="title">Doctor Login</div>', unsafe_allow_html=True)
 
     user = st.text_input("Username")
     pwd = st.text_input("Password", type="password")
 
     if st.button("Login"):
         if authenticate(user,pwd):
-            st.session_state.login = True
+            st.session_state.login=True
             st.success("Login successful")
             st.rerun()
         else:
             st.error("Invalid credentials")
 
-# ================= MAIN APP =================
+    st.markdown("</div></div></div>", unsafe_allow_html=True)
 
+# ================= MAIN APP =================
 else:
 
     st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
-    st.subheader("Patient Data Entry")
+    st.markdown("### 🩺 Patient Clinical Parameters")
     st.markdown("### Demo Patients")
 
     col1,col2,col3 = st.columns(3)
 
     if col1.button("Healthy Adult"):
-        st.session_state.patient = {
-            "preg":1,"glu":90,"bp":70,"skin":20,"ins":80,"bmi":22.0,"dpf":0.3,"age":30
-        }
+        st.session_state.patient = {"preg":1,"glu":90,"bp":70,"skin":20,"ins":80,"bmi":22.0,"dpf":0.3,"age":30}
 
     if col2.button("High Risk"):
-        st.session_state.patient = {
-            "preg":4,"glu":165,"bp":88,"skin":35,"ins":250,"bmi":33.5,"dpf":0.8,"age":52
-        }
+        st.session_state.patient = {"preg":4,"glu":165,"bp":88,"skin":35,"ins":250,"bmi":33.5,"dpf":0.8,"age":52}
 
     if col3.button("Known Diabetic"):
-        st.session_state.patient = {
-            "preg":6,"glu":180,"bp":95,"skin":40,"ins":300,"bmi":35.2,"dpf":1.1,"age":58
-        }
-
-    # ================= INPUTS =================
+        st.session_state.patient = {"preg":6,"glu":180,"bp":95,"skin":40,"ins":300,"bmi":35.2,"dpf":1.1,"age":58}
 
     p = st.session_state.patient
 
@@ -113,25 +157,16 @@ else:
     history = st.selectbox("Known diabetes history",["No","Yes"])
 
     # ================= PREDICT =================
-
     if st.button("Predict"):
 
-        if history=="Yes":
-            st.warning("Patient has known diabetes → system focusing on risk monitoring and lifestyle guidance")
-
         data = [preg,glu,bp,skin,ins,bmi,dpf,age]
-
         pred,prob,exp,shap_vals = predict_and_explain(data)
 
-        # ================= RESULT =================
-
-        st.header("Prediction")
-
+        # ================= RISK =================
         st.header("Clinical Risk Assessment")
 
         if history=="Yes":
-         st.error("Known Diabetes Case → Monitoring Mode")
-
+            st.error("Known Diabetes Case → Monitoring Mode")
         else:
             if prob < 0.35:
                 st.success(f"Healthy / Low Risk ({prob*100:.1f}%)")
@@ -139,8 +174,8 @@ else:
                 st.warning(f"Moderate Risk ({prob*100:.1f}%)")
             else:
                 st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
-        # ================= LIME TEXT =================
 
+        # ================= EXPLANATION =================
         st.subheader("Why this prediction?")
 
         for f,v in exp:
@@ -164,15 +199,13 @@ else:
                 st.write(f"🟢 {f}: Protective influence")
 
         # ================= LIFESTYLE =================
-
         st.subheader("Suggested lifestyle actions")
         st.write("- Reduce sugar intake")
         st.write("- 30 min daily walking")
         st.write("- Replace white rice with millets")
         st.write("- Regular glucose monitoring")
 
-        # ================= LIME BAR =================
-
+        # ================= CONTRIBUTION =================
         st.subheader("Feature Contribution Visualization")
 
         names=[x[0] for x in exp]
@@ -183,13 +216,10 @@ else:
         st.pyplot(fig)
 
         # ================= SHAP =================
-
         st.subheader("SHAP Explanation (Feature Impact)")
 
-        feature_names = [
-        "Pregnancies","Glucose","BloodPressure","SkinThickness",
-        "Insulin","BMI","DiabetesPedigreeFunction","Age"
-        ]
+        feature_names=["Pregnancies","Glucose","BloodPressure","SkinThickness",
+        "Insulin","BMI","DiabetesPedigreeFunction","Age"]
 
         fig2, ax2 = plt.subplots()
         ax2.barh(feature_names, shap_vals)

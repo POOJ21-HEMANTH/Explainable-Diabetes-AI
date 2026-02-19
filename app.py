@@ -81,10 +81,10 @@ else:
     else:
         preg = 0
 
-    glu = st.number_input("Glucose",0,300,value=p["glu"])
-    bp = st.number_input("Blood Pressure",0,200,value=p["bp"])
+    glu = st.number_input("Glucose (mg/dL)",0,300)
+    bp = st.number_input("Blood Pressure systolic (mmHg)",0,250)
     skin = st.number_input("Skin Thickness",0,100,value=p["skin"])
-    ins = st.number_input("Insulin",0,900,value=p["ins"])
+    ins = st.number_input("Insulin (µIU/mL)",0,900)
     bmi = st.number_input("BMI",0.0,70.0,value=p["bmi"])
     dpf = st.number_input("Family History Score",0.0,2.5,value=p["dpf"])
     age = st.number_input("Age",1,120,value=p["age"])

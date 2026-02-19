@@ -23,18 +23,21 @@ h1,h2,h3 {
 }
 
 .stButton>button {
-    background:#4f46e5;
+    .stButton>button {
+    background:#1976d2;
     color:white;
     border-radius:12px;
     height:3em;
     width:100%;
     font-size:18px;
     border:none;
+    box-shadow:0px 6px 20px rgba(0,0,0,0.15);
 }
 
 
 /* Inputs */
-.stNumberInput input {
+.stNumberInput input,
+.stTextInput input {
     border-radius:10px;
 }
 
@@ -47,12 +50,11 @@ h1,h2,h3 {
 }
 
 .login-card{
-    display:flex;
-    width:900px;
+    width:420px;
+    padding:35px;
     background:white;
     border-radius:20px;
-    box-shadow:0px 10px 30px rgba(0,0,0,0.15);
-    overflow:hidden;
+    box-shadow:0px 10px 30px rgba(0,0,0,0.2);
 }
 
 .left-panel{

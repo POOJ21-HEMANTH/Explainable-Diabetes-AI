@@ -88,8 +88,8 @@ if not st.session_state.login:
         st.markdown('<div class="card">', unsafe_allow_html=True)
 
         st.markdown("### Doctor Login")
-        user = st.text_input("Username")
-        pwd = st.text_input("Password", type="password")
+        user = st.text_input("Username", key="login_user")
+        pwd = st.text_input("Password", type="password", key="login_pwd")
 
         if st.button("Login"):
             if authenticate(user,pwd):

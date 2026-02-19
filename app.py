@@ -14,26 +14,24 @@ st.markdown("""
 
 /* Background */
 .main {
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+     background: linear-gradient(135deg,#eef2ff,#ffffff);
 }
 
-/* Titles */
 h1,h2,h3 {
-    color:white;
+    color:#312e81;
     text-align:center;
 }
 
-/* Buttons */
 .stButton>button {
-    background: linear-gradient(45deg,#00c6ff,#0072ff);
+    background:#4f46e5;
     color:white;
     border-radius:12px;
     height:3em;
     width:100%;
     font-size:18px;
     border:none;
-    box-shadow:0px 4px 15px rgba(0,0,0,0.2);
 }
+
 
 /* Inputs */
 .stNumberInput input {

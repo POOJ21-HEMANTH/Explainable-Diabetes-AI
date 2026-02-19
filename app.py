@@ -43,6 +43,26 @@ if "patient" not in st.session_state:
 
 # ================= LOGIN PAGE =================
 if not st.session_state.login:
+    st.markdown("""
+<style>
+.stApp {
+    background-image: url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* dark overlay so text visible */
+.stApp::before {
+    content:"";
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.35);
+    z-index:-1;
+}
+</style>
+""", unsafe_allow_html=True)
 
     col1,col2 = st.columns([5,6])
 
@@ -62,7 +82,23 @@ if not st.session_state.login:
                 st.rerun()
             else:
                 st.error("Invalid credentials")
+    c1,c2,c3 = st.columns([1,2,1])
 
+    with c2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+
+        st.markdown("### Doctor Login")
+        user = st.text_input("Username")
+        pwd = st.text_input("Password", type="password")
+
+        if st.button("Login"):
+            if authenticate(user,pwd):
+                st.session_state.login=True
+                st.rerun()
+            else:
+                st.error("Invalid credentials")
+
+        st.markdown('</div>', unsafe_allow_html=True)
 # ================= MAIN APP =================
 else:
 

@@ -2,6 +2,8 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from auth import authenticate
 from utils import predict_and_explain
+from database import save_patient, load_patients
+
 
 # ================= PAGE CONFIG =================
 st.set_page_config(page_title="Explainable Diabetes AI", layout="centered")
@@ -77,6 +79,24 @@ h1,h2,h3 {
     font-weight:bold;
     margin-bottom:20px;
 }
+.stApp {
+    background: linear-gradient(135deg,#e3f2fd,#ffffff);
+}
+
+h1,h2,h3 {
+    color:#0d47a1;
+    text-align:center;
+}
+
+.stButton>button {
+    background:#1976d2;
+    color:white;
+    border-radius:12px;
+    height:3em;
+    width:100%;
+    font-size:18px;
+    border:none;
+}            
 
 </style>
 """, unsafe_allow_html=True)
@@ -150,19 +170,11 @@ else:
     st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
+    # ================= PATIENT INPUT =================
     st.markdown("### 🩺 Patient Clinical Parameters")
-    st.markdown("### Demo Patients")
 
-    col1,col2,col3 = st.columns(3)
-
-    if col1.button("Healthy Adult"):
-        st.session_state.patient = {"preg":1,"glu":90,"bp":70,"skin":20,"ins":80,"bmi":22.0,"dpf":0.3,"age":30}
-
-    if col2.button("High Risk"):
-        st.session_state.patient = {"preg":4,"glu":165,"bp":88,"skin":35,"ins":250,"bmi":33.5,"dpf":0.8,"age":52}
-
-    if col3.button("Known Diabetic"):
-        st.session_state.patient = {"preg":6,"glu":180,"bp":95,"skin":40,"ins":300,"bmi":35.2,"dpf":1.1,"age":58}
+    # ⭐ NEW — Patient identity
+    patient_name = st.text_input("Patient Name")
 
     p = st.session_state.patient
 
@@ -176,6 +188,16 @@ else:
     age = st.number_input("Age",1,120,value=p["age"])
 
     history = st.selectbox("Known diabetes history",["No","Yes"])
+
+    # ================= DATABASE TABLE =================
+    st.subheader("📋 Patient Database")
+
+    df = load_patients()
+
+    if not df.empty:
+        st.dataframe(df, use_container_width=True)
+    else:
+        st.info("No patient records yet")
 
     # ================= PREDICT =================
     if st.button("Predict"):
@@ -218,6 +240,16 @@ else:
                 st.write(f"🔴 {f}: {msg}")
             else:
                 st.write(f"🟢 {f}: Protective influence")
+
+        # ================= SAVE BUTTON (NEW) =================
+        st.divider()
+
+        if st.button("💾 Save Patient Record"):
+            if patient_name.strip()=="":
+                st.warning("Enter patient name before saving")
+            else:
+                save_patient(patient_name, age, glu, bp, bmi, user)
+                st.success("Patient saved to database")
 
         # ================= LIFESTYLE =================
         st.subheader("Suggested lifestyle actions")

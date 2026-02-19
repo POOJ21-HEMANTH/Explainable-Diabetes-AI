@@ -82,23 +82,7 @@ if not st.session_state.login:
                 st.rerun()
             else:
                 st.error("Invalid credentials")
-    c1,c2,c3 = st.columns([1,2,1])
 
-    with c2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-
-        st.markdown("### Doctor Login")
-        user = st.text_input("Username", key="login_user")
-        pwd = st.text_input("Password", type="password", key="login_pwd")
-
-        if st.button("Login"):
-            if authenticate(user,pwd):
-                st.session_state.login=True
-                st.rerun()
-            else:
-                st.error("Invalid credentials")
-
-        st.markdown('</div>', unsafe_allow_html=True)
 # ================= MAIN APP =================
 else:
 

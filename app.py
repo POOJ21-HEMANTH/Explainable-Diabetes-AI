@@ -118,26 +118,8 @@ else:
 
     # ================= SHOW RESULTS =================
     if "prediction_data" in st.session_state:
+        
         pred,prob,exp,shap_vals = st.session_state.prediction_data
-        # ================= RISK CARD =================
-        risk_label = "Low Risk"
-        risk_color = "#bbf7d0"
-
-        if prob >= 0.65:
-            risk_label = "High Risk"
-            risk_color = "#fecaca"
-        elif prob >= 0.35:
-            risk_label = "Moderate Risk"
-            risk_color = "#fde68a"
-
-        st.markdown(f"""
-        <div style="background:{risk_color};
-        padding:18px;border-radius:14px;margin-top:10px;margin-bottom:10px;
-        box-shadow:0px 6px 14px rgba(0,0,0,0.08)">
-        <b>Risk Level:</b> {risk_label}<br>
-        <b>Probability:</b> {prob*100:.1f}%
-        </div>
-        """, unsafe_allow_html=True)
 
         st.header("Clinical Risk Assessment")
 

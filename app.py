@@ -19,19 +19,16 @@ st.set_page_config(page_title="Explainable Diabetes AI", layout="centered")
 # ================= GLOBAL CSS =================
 st.markdown("""
 <style>
-    /* Main container background */
-    .stApp { background-color: #f8fafc; }
-    
-    /* Card Styling */
-    .metric-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        border: 1px solid #e2e8f0;
-        margin-bottom: 1rem;
-    }
-    .metric-title { color: #64748b; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; }
+.stApp {background:#f5f7ff;}
+h1,h2,h3 {color:#1e1b4b;text-align:center;}
+.stButton>button {
+background:#4f46e5;color:white;border-radius:12px;height:3em;width:100%;
+font-size:18px;border:none;box-shadow:0px 6px 18px rgba(79,70,229,0.3);}
+.stNumberInput input,.stTextInput input,.stSelectbox div[data-baseweb="select"]{
+border-radius:10px;background:white;color:black;}
+.block-container{background:white;padding:2rem;border-radius:18px;
+box-shadow:0px 10px 25px rgba(0,0,0,0.08);}
+label,p,span{color:black!important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -66,69 +63,38 @@ if not st.session_state.login:
             else:
                 st.error("Invalid credentials")
 
+# ================= MAIN APP =================
 else:
-    # Header area with actions
-    head1, head2 = st.columns([3, 1])
-    with head1:
-        st.title("Clinical Decision Support")
-        st.caption("Real-time risk assessment and AI explainability for diabetic patients.")
-    with head2:
-        st.write("") # Spacing
-        if st.button("🚀 Run Prediction"):
-            # Trigger prediction logic
-            data = [preg, glu, bp, skin, ins, bmi, dpf, age]
-            st.session_state.prediction_data = predict_and_explain(data)
 
-    # CREATE TWO MAIN COLUMNS: Left (Inputs) | Right (Results)
-    left_col, right_col = st.columns([2, 1])
+    st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
+    st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
-    with left_col:
-        st.markdown("### 🩺 Patient Clinical Parameters")
-        # Use a nested grid for inputs
-        i1, i2, i3 = st.columns(3)
-        with i1:
-            patient_name = st.text_input("Patient Name")
-            height = st.number_input("Height (cm)", 100, 220)
-        with i2:
-            age = st.number_input("Age", 1, 120)
-            weight = st.number_input("Weight (kg)", 30, 200)
-        with i3:
-            gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-            bmi = weight / ((height/100)**2)
-            st.text_input("Calculated BMI", f"{bmi:.1f}", disabled=True)
+    st.markdown("### 🩺 Patient Clinical Parameters")
 
-        # AI Reasoning Section (Below inputs)
-        st.markdown("### 🧠 AI Clinical Reasoning")
-        if "prediction_data" in st.session_state:
-            pred, prob, exp, shap_vals = st.session_state.prediction_data
-            top_factors = [f for f, v in exp if v > 0][:3]
-            st.info(f"The model identifies **{', '.join(top_factors)}** as the primary contributing factors.")
-        else:
-            st.info("Run prediction to see AI reasoning")
+    # ================= INPUTS =================
+    patient_name = st.text_input("Patient Name")
+    age = st.number_input("Age",1,120)
 
-    with right_col:
-        st.markdown("### 📊 Assessment Result")
-        if "prediction_data" in st.session_state:
-            pred, prob, exp, shap_vals = st.session_state.prediction_data
-            
-            # Use a colorful metric display
-            st.metric(label="Diabetes Probability", value=f"{prob*100:.1f}%")
-            
-            st.markdown("### 📋 Suggested Care Plan")
-            if prob < 0.35:
-                st.success("Low Risk: Maintain lifestyle")
-            elif prob < 0.65:
-                st.warning("Moderate Risk: Preventive intervention")
-            else:
-                st.error("High Risk: Clinical follow-up")
-        else:
-            st.write("Waiting for prediction data...")
+    gender = st.selectbox("Gender",["Male","Female","Other"])
 
-    # Patient History Table (Full width at bottom)
-    st.markdown("--- ")
-    st.subheader("📋 Patient Record History")
-    df = load_patients()
-    st.dataframe(df, use_container_width=True)
+    if gender=="Female":
+        preg = st.number_input("Pregnancy history",0,15)
+    else:
+        preg = 0
+
+    height = st.number_input("Height (cm)",100,220)
+    weight = st.number_input("Weight (kg)",30,200)
+
+    bmi = weight / ((height/100)**2)
+    st.write(f"Calculated BMI: {bmi:.2f}")
+
+    glu = st.number_input("Glucose (mg/dL)",0,300)
+    bp = st.number_input("Blood Pressure systolic (mmHg)",0,250)
+    ins = st.number_input("Insulin (µIU/mL)",0,900)
+    skin = st.number_input("Skin thickness (optional)",0,100,value=20)
+
+    family_history = st.selectbox("Family history of diabetes",["No","Yes"])
+    dpf = 1.0 if family_history=="Yes" else 0.2
 
     # ================= DATABASE TABLE =================
     st.subheader("📋 Patient Database")

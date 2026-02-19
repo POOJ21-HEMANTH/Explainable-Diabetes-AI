@@ -1,7 +1,8 @@
 import pandas as pd
 from datetime import datetime
 
-DB_FILE = "patients.csv"
+from config import DB_FILE
+
 
 def save_patient(name, age, glucose, bp, bmi, doctor):
 

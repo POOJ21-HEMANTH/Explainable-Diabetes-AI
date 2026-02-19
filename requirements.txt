@@ -1,6 +1,6 @@
 pandas
 scikit-learn
-streamlit
+streamlit>=1.37
 shap
 matplotlib
 joblib

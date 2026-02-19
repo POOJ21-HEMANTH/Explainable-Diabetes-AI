@@ -68,97 +68,79 @@ else:
     st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
-    # ================= PATIENT INPUT =================
     st.markdown("### 🩺 Patient Clinical Parameters")
 
+    # ================= INPUTS =================
     patient_name = st.text_input("Patient Name")
-    gender = st.selectbox("Gender",["Male","Female"])
+    age = st.number_input("Age",1,120)
 
-    p = st.session_state.patient
+    gender = st.selectbox("Gender",["Male","Female","Other"])
 
     if gender=="Female":
-        preg = st.number_input("Pregnancies",0,20,value=p["preg"])
+        preg = st.number_input("Pregnancy history",0,15)
     else:
         preg = 0
 
+    height = st.number_input("Height (cm)",100,220)
+    weight = st.number_input("Weight (kg)",30,200)
+
+    bmi = weight / ((height/100)**2)
+    st.write(f"Calculated BMI: {bmi:.2f}")
+
     glu = st.number_input("Glucose (mg/dL)",0,300)
     bp = st.number_input("Blood Pressure systolic (mmHg)",0,250)
-    skin = st.number_input("Skin Thickness",0,100,value=p["skin"])
     ins = st.number_input("Insulin (µIU/mL)",0,900)
-    bmi = st.number_input("BMI",0.0,70.0,value=p["bmi"])
-    dpf = st.number_input("Family History Score",0.0,2.5,value=p["dpf"])
-    age = st.number_input("Age",1,120,value=p["age"])
-    history = st.selectbox("Known diabetes history",["No","Yes"])
+    skin = st.number_input("Skin thickness (optional)",0,100,value=20)
 
-    # ================= DATABASE =================
+    family_history = st.selectbox("Family history of diabetes",["No","Yes"])
+    dpf = 1.0 if family_history=="Yes" else 0.2
+
+    # ================= DATABASE TABLE =================
     st.subheader("📋 Patient Database")
+
     df = load_patients()
 
     if not df.empty:
         st.dataframe(df, use_container_width=True)
-
-        selected = st.selectbox("Select patient to view", df["Name"])
-        if st.button("View Selected Patient"):
-            row = df[df["Name"]==selected].iloc[0]
-            st.info(f"{row['Name']} | Age {row['Age']} | Date {row['Date']}")
-
     else:
         st.info("No patient records yet")
 
-    # ================= PREDICT =================
+    # ================= PREDICT BUTTON =================
     if st.button("Predict"):
 
         data = [preg,glu,bp,skin,ins,bmi,dpf,age]
+
         pred,prob,exp,shap_vals = predict_and_explain(data)
 
-        # ⭐ Popup style
-        with st.expander("🔍 View AI Diagnosis Report", expanded=True):
+        # ⭐ store prediction
+        st.session_state.prediction_data = (pred,prob,exp,shap_vals)
 
-            st.header("Clinical Risk Assessment")
+    # ================= SHOW RESULTS =================
+    if "prediction_data" in st.session_state:
 
-            if history=="Yes":
-                st.error("Known Diabetes Case → Monitoring Mode")
+        pred,prob,exp,shap_vals = st.session_state.prediction_data
+
+        st.header("Clinical Risk Assessment")
+
+        if prob < 0.35:
+            st.success(f"Healthy / Low Risk ({prob*100:.1f}%)")
+        elif prob < 0.65:
+            st.warning(f"Moderate Risk ({prob*100:.1f}%)")
+        else:
+            st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
+
+        # ================= SAVE BUTTON (NOW WORKS) =================
+        if st.button("💾 Save Patient Record"):
+
+            if patient_name.strip()=="":
+                st.warning("Enter patient name")
             else:
-                if prob < 0.35:
-                    st.success(f"Healthy / Low Risk ({prob*100:.1f}%)")
-                elif prob < 0.65:
-                    st.warning(f"Moderate Risk ({prob*100:.1f}%)")
-                else:
-                    st.error(f"High Diabetes Risk ({prob*100:.1f}%)")
+                save_patient(patient_name, age, glu, bp, bmi, user)
+                st.success("Patient saved ✅")
 
-            # ================= EXPLANATION =================
-            st.subheader("Why this prediction?")
-
-            for f,v in exp:
-
-                if f=="Glucose":
-                    msg="Elevated glucose indicates impaired insulin regulation"
-                elif f=="BMI":
-                    msg="Higher BMI suggests obesity-related insulin resistance"
-                elif f=="Age":
-                    msg="Age increases metabolic risk"
-                elif f=="DiabetesPedigreeFunction":
-                    msg="Family history contributes to genetic susceptibility"
-                elif f=="BloodPressure":
-                    msg="Hypertension correlates with metabolic syndrome"
-                else:
-                    msg="Clinical feature contributing to prediction"
-
-                if v>0:
-                    st.write(f"🔴 {f}: {msg}")
-                else:
-                    st.write(f"🟢 {f}: Protective influence")
-
-            # ================= SAVE =================
-            st.divider()
-
-            if st.button("💾 Save Patient Record"):
-                if patient_name.strip()=="":
-                    st.warning("Enter patient name")
-                else:
-                    save_patient(patient_name, age, glu, bp, bmi, user,
-                                 datetime.now().strftime("%Y-%m-%d"))
-                    st.success("Patient saved")
+                # refresh table
+                st.session_state.pop("prediction_data")
+                st.rerun()
 
             # ================= LIFESTYLE =================
             st.subheader("Suggested lifestyle actions")

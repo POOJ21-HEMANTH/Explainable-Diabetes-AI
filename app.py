@@ -23,7 +23,7 @@ st.markdown("""
     background: #f5f7ff;
 }
 
-/* Force almost all text to black */
+/* Force most text to black */
 h1, h2, h3, h4, h5, h6,
 p, span, div, label, li, a:not(.stButton a),
 .stMarkdown, .stText, .stCaption,
@@ -31,12 +31,12 @@ p, span, div, label, li, a:not(.stButton a),
     color: #000000 !important;
 }
 
-/* Headings centered (you already had this) */
+/* Headings centered */
 h1, h2, h3 {
     text-align: center;
 }
 
-/* Buttons */
+/* Buttons - keep white text */
 .stButton > button {
     background: #4f46e5;
     color: white !important;
@@ -48,13 +48,37 @@ h1, h2, h3 {
     box-shadow: 0px 6px 18px rgba(79,70,229,0.3);
 }
 
-/* Inputs / Select */
+/* Text inputs & number inputs - black text */
 .stNumberInput input,
-.stTextInput input,
-.stSelectbox div[data-baseweb="select"] {
+.stTextInput input {
     border-radius: 10px;
     background: white;
     color: #000000 !important;
+}
+
+/* ── Selectbox: yellow text for selected value + dropdown options ── */
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 10px;
+    background: white;
+}
+
+/* Selected value (the box you see before clicking) */
+.stSelectbox [data-baseweb="select"] > div {
+    color: #ffff00 !important;   /* bright yellow */
+}
+
+/* Dropdown menu options when opened */
+.stSelectbox ul[data-baseweb="menu"] li,
+.stSelectbox [role="option"] {
+    color: #ffff00 !important;   /* yellow for each option */
+    background: #1a1a1a !important;  /* dark background so yellow is readable */
+}
+
+/* Optional: make the selected/hovered option more visible */
+.stSelectbox [role="option"]:hover,
+.stSelectbox [aria-selected="true"] {
+    background: #333333 !important;
+    color: #ffff00 !important;
 }
 
 /* Main content blocks */
@@ -65,7 +89,7 @@ h1, h2, h3 {
     box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
 }
 
-/* Override any remaining colored text that might come from Streamlit */
+/* Extra override for markdown / any leftover colored text */
 .stApp [data-testid="stMarkdownContainer"] * {
     color: #000000 !important;
 }

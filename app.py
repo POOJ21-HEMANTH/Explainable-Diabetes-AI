@@ -19,84 +19,16 @@ st.set_page_config(page_title="Explainable Diabetes AI", layout="centered")
 # ================= GLOBAL CSS =================
 st.markdown("""
 <style>
-.stApp {
-    background: #f5f7ff;
-}
-
-/* Force most text to black */
-h1, h2, h3, h4, h5, h6,
-p, span, div, label, li, a:not(.stButton a),
-.stMarkdown, .stText, .stCaption,
-.block-container, .stApp * {
-    color: #000000 !important;
-}
-
-/* Headings centered */
-h1, h2, h3 {
-    text-align: center;
-}
-
-/* Buttons - keep white text */
-.stButton > button {
-    background: #4f46e5;
-    color: white !important;
-    border-radius: 12px;
-    height: 3em;
-    width: 100%;
-    font-size: 18px;
-    border: none;
-    box-shadow: 0px 6px 18px rgba(79,70,229,0.3);
-}
-
-/* Text inputs & number inputs - black text */
-.stNumberInput input,
-.stTextInput input {
-    border-radius: 10px;
-    background: white;
-    color: #000000 !important;
-}
-
-/* ── Selectbox: yellow text for selected value + dropdown options ── */
-.stSelectbox div[data-baseweb="select"] {
-    border-radius: 10px;
-    background: white;
-}
-
-/* Selected value (the box you see before clicking) */
-.stSelectbox [data-baseweb="select"] > div {
-    color: #ffff00 !important;   /* bright yellow */
-}
-
-/* Dropdown menu options when opened */
-.stSelectbox ul[data-baseweb="menu"] li,
-.stSelectbox [role="option"] {
-    color: #ffff00 !important;   /* yellow for each option */
-    background: #1a1a1a !important;  /* dark background so yellow is readable */
-}
-
-/* Optional: make the selected/hovered option more visible */
-.stSelectbox [role="option"]:hover,
-.stSelectbox [aria-selected="true"] {
-    background: #333333 !important;
-    color: #ffff00 !important;
-}
-
-/* Main content blocks */
-.block-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 18px;
-    box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
-}
-
-/* Extra override for markdown / any leftover colored text */
-.stApp [data-testid="stMarkdownContainer"] * {
-    color: #000000 !important;
-}
-
-label, p, span {
-    color: #000000 !important;
-}
+.stApp {background:#f5f7ff;}
+h1,h2,h3 {color:#1e1b4b;text-align:center;}
+.stButton>button {
+background:#4f46e5;color:white;border-radius:12px;height:3em;width:100%;
+font-size:18px;border:none;box-shadow:0px 6px 18px rgba(79,70,229,0.3);}
+.stNumberInput input,.stTextInput input,.stSelectbox div[data-baseweb="select"]{
+border-radius:10px;background:white;color:black;}
+.block-container{background:white;padding:2rem;border-radius:18px;
+box-shadow:0px 10px 25px rgba(0,0,0,0.08);}
+label,p,span{color:black!important;}
 </style>
 """, unsafe_allow_html=True)
 

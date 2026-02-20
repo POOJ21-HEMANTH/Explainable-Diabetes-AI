@@ -19,16 +19,60 @@ st.set_page_config(page_title="Explainable Diabetes AI", layout="centered")
 # ================= GLOBAL CSS =================
 st.markdown("""
 <style>
-.stApp {background:#f5f7ff;}
-h1,h2,h3 {color:#1e1b4b;text-align:center;}
-.stButton>button {
-background:#4f46e5;color:white;border-radius:12px;height:3em;width:100%;
-font-size:18px;border:none;box-shadow:0px 6px 18px rgba(79,70,229,0.3);}
-.stNumberInput input,.stTextInput input,.stSelectbox div[data-baseweb="select"]{
-border-radius:10px;background:white;color:black;}
-.block-container{background:white;padding:2rem;border-radius:18px;
-box-shadow:0px 10px 25px rgba(0,0,0,0.08);}
-label,p,span{color:black!important;}
+.stApp {
+    background: #f5f7ff;
+}
+
+/* Force almost all text to black */
+h1, h2, h3, h4, h5, h6,
+p, span, div, label, li, a:not(.stButton a),
+.stMarkdown, .stText, .stCaption,
+.block-container, .stApp * {
+    color: #000000 !important;
+}
+
+/* Headings centered (you already had this) */
+h1, h2, h3 {
+    text-align: center;
+}
+
+/* Buttons */
+.stButton > button {
+    background: #4f46e5;
+    color: white !important;
+    border-radius: 12px;
+    height: 3em;
+    width: 100%;
+    font-size: 18px;
+    border: none;
+    box-shadow: 0px 6px 18px rgba(79,70,229,0.3);
+}
+
+/* Inputs / Select */
+.stNumberInput input,
+.stTextInput input,
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 10px;
+    background: white;
+    color: #000000 !important;
+}
+
+/* Main content blocks */
+.block-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 18px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
+}
+
+/* Override any remaining colored text that might come from Streamlit */
+.stApp [data-testid="stMarkdownContainer"] * {
+    color: #000000 !important;
+}
+
+label, p, span {
+    color: #000000 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -85,12 +129,11 @@ if not st.session_state.login:
 
 # ================= MAIN APP =================
 else:
-
     st.markdown("<h1>Explainable AI Diabetes Decision Support</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Transparent Clinical Risk Assessment Platform</h3>", unsafe_allow_html=True)
 
     st.markdown("### 🩺 Patient Clinical Parameters")
-
+    
     # ================= INPUTS =================
     patient_name = st.text_input("Patient Name")
     age = st.number_input("Age",1,120)
